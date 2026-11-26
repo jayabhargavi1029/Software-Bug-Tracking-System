@@ -226,12 +226,31 @@ java -jar target\bug-ticket-tracker-1.0.0.jar --spring.profiles.active=demo
 
 ## Screenshots
 
-No screenshots are included in this source submission. Add real screenshots here when captured; do not use mockups as evidence of tested behavior.
+These are genuine screenshots captured from the running public demo at [bugtrack-java.onrender.com](https://bugtrack-java.onrender.com), not recreated mockups. They show seeded sample data. The login screenshot does not expose credentials; form-validation screenshots contain only empty submissions. No ticket, user, comment, assignment, or status changes were submitted while capturing them.
 
-- `[Screenshot placeholder: landing page]`
-- `[Screenshot placeholder: administrator dashboard]`
-- `[Screenshot placeholder: ticket list/details]`
-- `[Screenshot placeholder: developer dashboard]`
+| Screenshot | Page or feature |
+| --- | --- |
+| [01-landing-page.png](docs/screenshots/01-landing-page.png) | Public landing page |
+| [02-login-page.png](docs/screenshots/02-login-page.png) | Sign-in page |
+| [03-admin-dashboard.png](docs/screenshots/03-admin-dashboard.png) | Administrator dashboard |
+| [04-admin-all-tickets.png](docs/screenshots/04-admin-all-tickets.png) | Administrator ticket list |
+| [05-admin-create-ticket-form.png](docs/screenshots/05-admin-create-ticket-form.png) | Ticket creation form |
+| [06-admin-ticket-details.png](docs/screenshots/06-admin-ticket-details.png) | Administrator ticket details |
+| [07-admin-edit-ticket.png](docs/screenshots/07-admin-edit-ticket.png) | Ticket edit form |
+| [08-admin-ticket-comments.png](docs/screenshots/08-admin-ticket-comments.png) | Ticket comments |
+| [09-admin-ticket-assignment-status-history.png](docs/screenshots/09-admin-ticket-assignment-status-history.png) | Assignment, status, and activity history controls |
+| [10-admin-user-management.png](docs/screenshots/10-admin-user-management.png) | User list and user creation form |
+| [11-admin-user-creation-validation.png](docs/screenshots/11-admin-user-creation-validation.png) | User creation validation |
+| [12-admin-user-details.png](docs/screenshots/12-admin-user-details.png) | User details |
+| [13-admin-user-access-management.png](docs/screenshots/13-admin-user-access-management.png) | User access management |
+| [14-developer-dashboard.png](docs/screenshots/14-developer-dashboard.png) | Developer dashboard |
+| [15-developer-assigned-tickets.png](docs/screenshots/15-developer-assigned-tickets.png) | Developer assigned tickets |
+| [16-developer-reported-tickets.png](docs/screenshots/16-developer-reported-tickets.png) | Developer reported tickets |
+| [17-developer-assigned-reported-tickets.png](docs/screenshots/17-developer-assigned-reported-tickets.png) | Developer assigned and reported tickets |
+| [18-developer-ticket-details.png](docs/screenshots/18-developer-ticket-details.png) | Developer ticket details |
+| [19-developer-comments-status-interface.png](docs/screenshots/19-developer-comments-status-interface.png) | Developer comment and status controls |
+| [20-developer-access-denied.png](docs/screenshots/20-developer-access-denied.png) | Access-denied page (expected HTTP 403) |
+| [21-ticket-validation-errors.png](docs/screenshots/21-ticket-validation-errors.png) | Ticket form validation |
 
 ## Troubleshooting
 
