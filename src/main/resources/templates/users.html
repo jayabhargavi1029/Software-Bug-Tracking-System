@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Users')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/layout :: sidebar('users')}"></aside>
+    <div class="content-area">
+        <header th:replace="~{fragments/layout :: topbar('User Management')}"></header>
+        <main class="page">
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+            <div class="page-head">
+                <div><h1>Users</h1><p class="text-muted">Select a user's name or avatar to view their profile and account details.</p></div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-xl-4">
+                    <form th:action="@{/admin/users}" th:object="${userForm}" method="post" class="card-box" novalidate>
+                        <h3 class="card-title">Add user</h3>
+                        <div class="mb-3">
+                            <label class="form-label" for="fullName">Full name *</label>
+                            <input id="fullName" type="text" th:field="*{fullName}" class="form-control" th:errorclass="is-invalid">
+                            <div class="invalid-feedback" th:errors="*{fullName}">Error</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="username">Username *</label>
+                            <input id="username" type="text" th:field="*{username}" class="form-control" th:errorclass="is-invalid" autocomplete="off">
+                            <div class="invalid-feedback" th:errors="*{username}">Error</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="email">E-mail *</label>
+                            <input id="email" type="email" th:field="*{email}" class="form-control" th:errorclass="is-invalid">
+                            <div class="invalid-feedback" th:errors="*{email}">Error</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="password">Password *</label>
+                            <input id="password" type="password" th:field="*{password}" class="form-control" th:errorclass="is-invalid" autocomplete="new-password">
+                            <div class="invalid-feedback" th:errors="*{password}">Error</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="role">Role *</label>
+                            <select id="role" th:field="*{role}" class="form-select" th:errorclass="is-invalid">
+                                <option value="">Select role</option>
+                                <option th:each="r : ${roles}" th:value="${r.name()}" th:text="${r.label}"></option>
+                            </select>
+                            <div class="invalid-feedback" th:errors="*{role}">Error</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-person-plus"></i> Create user</button>
+                    </form>
+                </div>
+
+                <div class="col-xl-8">
+                    <section class="card-box p-0">
+                        <div class="table-responsive">
+                            <table class="table data-table align-middle mb-0">
+                                <thead>
+                                <tr>
+                                    <th>Name</th><th>Username</th><th class="d-none d-md-table-cell">E-mail</th><th>Role</th><th>Status</th><th>Access</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="u : ${users}">
+                                    <td>
+                                        <a th:href="@{/admin/users/{id}(id=${u.id})}" class="user-profile-link"
+                                           th:title="'View profile for ' + ${u.fullName}">
+                                            <span class="avatar sm" th:text="${u.initial}">A</span>
+                                            <span th:text="${u.fullName}">Name</span>
+                                        </a>
+                                    </td>
+                                    <td th:text="${u.username}">user</td>
+                                    <td class="d-none d-md-table-cell text-muted" th:text="${u.email}">mail</td>
+                                    <td><span class="role-tag" th:text="${u.role.label}">Role</span></td>
+                                    <td>
+                                        <span th:if="${u.anonymized}" class="pill status-closed">Anonymized</span>
+                                        <span th:if="${u.accessRevoked and !u.anonymized}" class="pill status-closed">Access removed</span>
+                                        <span th:if="${!u.anonymized and !u.accessRevoked}" class="pill"
+                                              th:classappend="${u.active} ? 'status-resolved' : 'status-closed'"
+                                              th:text="${u.active} ? 'Active' : 'Inactive'">Active</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <form th:action="@{/admin/users/{id}/toggle(id=${u.id})}" method="post" class="m-0"
+                                              th:if="${u.id != currentUser.id and !u.anonymized and !u.accessRevoked}">
+                                            <button type="submit" class="btn btn-sm btn-light" th:text="${u.active} ? 'Deactivate' : 'Activate'">Toggle</button>
+                                        </form>
+                                        <span th:if="${u.id == currentUser.id}" class="text-muted small">Current account</span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

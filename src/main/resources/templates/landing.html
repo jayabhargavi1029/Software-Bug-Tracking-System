@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('BugTrack')}"></head>
+<body class="landing-body">
+<header class="landing-header">
+    <div class="landing-container landing-nav">
+        <a th:href="@{/}" class="brand landing-brand">
+            <span class="brand-mark"><i class="bi bi-bug-fill"></i></span>
+            <span>Bug<b>Track</b></span>
+        </a>
+        <nav class="landing-nav-links" aria-label="Main navigation">
+            <a href="#platform">Platform</a>
+            <a href="#workflow">How it works</a>
+            <a th:href="@{/login}">Sign in</a>
+            <a th:href="@{/login}" class="btn btn-primary landing-nav-cta">Open workspace <i class="bi bi-arrow-up-right"></i></a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="landing-hero">
+        <div class="landing-container landing-hero-grid">
+            <div class="landing-hero-copy">
+                <div class="landing-eyebrow"><span class="landing-eyebrow-dot"></span> ISSUE TRACKING FOR BETTER TEAMS</div>
+                <h1>Make every bug<br><span>move work forward.</span></h1>
+                <p>Bring reports, ownership and progress into one clear workspace. Give every issue a path from first report to resolved.</p>
+                <div class="landing-actions">
+                    <a th:href="@{/login}" class="btn btn-primary landing-primary">Enter BugTrack <i class="bi bi-arrow-right"></i></a>
+                    <a href="#platform" class="landing-text-link">Explore the platform <i class="bi bi-arrow-down-right"></i></a>
+                </div>
+                <div class="landing-trust-line">
+                    <span><i class="bi bi-check-circle-fill"></i> Clear ownership</span>
+                    <span><i class="bi bi-check-circle-fill"></i> Shared context</span>
+                    <span><i class="bi bi-check-circle-fill"></i> Visible progress</span>
+                </div>
+            </div>
+
+            <div class="landing-preview-wrap">
+                <div class="landing-preview-glow"></div>
+                <section class="landing-preview" aria-label="Illustrative BugTrack dashboard preview">
+                    <div class="preview-topbar">
+                        <span class="preview-window-mark"><i class="bi bi-bug-fill"></i></span>
+                        <strong>BugTrack</strong>
+                        <span>Project overview</span>
+                        <span class="preview-avatar">BT</span>
+                    </div>
+                    <div class="preview-content">
+                        <div class="preview-heading">
+                            <div><small>TEAM WORKSPACE</small><h2>Issue overview</h2></div>
+                            <span class="preview-filter">All projects <i class="bi bi-chevron-down"></i></span>
+                        </div>
+                        <div class="preview-stats">
+                            <div class="preview-stat"><small>Open issues</small><strong>08</strong><span><i class="bi bi-circle-fill"></i> Needs attention</span></div>
+                            <div class="preview-stat"><small>In progress</small><strong>04</strong><span><i class="bi bi-arrow-repeat"></i> Being worked on</span></div>
+                            <div class="preview-stat"><small>Resolved</small><strong>16</strong><span><i class="bi bi-check-circle-fill"></i> This month</span></div>
+                        </div>
+                        <div class="preview-list">
+                            <div class="preview-list-head"><span>Issue</span><span>Owner</span><span>Status</span></div>
+                            <div class="preview-row"><span class="preview-ticket"><b>BUG-1042</b>Checkout total mismatch</span><span class="preview-owner"><i class="bi bi-person-circle"></i> Priya</span><span class="preview-status">In progress</span></div>
+                            <div class="preview-row"><span class="preview-ticket"><b>BUG-1041</b>Profile image not updating</span><span class="preview-owner"><i class="bi bi-person-circle"></i> Rahul</span><span class="preview-status">Open</span></div>
+                            <div class="preview-row"><span class="preview-ticket"><b>BUG-1040</b>Search filter edge case</span><span class="preview-owner"><i class="bi bi-person-circle"></i> Anita</span><span class="preview-status done">Resolved</span></div>
+                        </div>
+                        <p class="preview-caption">Illustrative workspace preview</p>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </section>
+
+    <section class="landing-section" id="platform">
+        <div class="landing-container">
+            <div class="landing-section-heading">
+                <span>ONE SHARED WORKSPACE</span>
+                <h2>From first report to final resolution</h2>
+                <p>Keep the details, decisions and next steps connected to every issue—so your team can focus on shipping reliable software.</p>
+            </div>
+            <div class="landing-feature-grid">
+                <article class="landing-feature">
+                    <span class="landing-feature-icon"><i class="bi bi-inboxes"></i></span>
+                    <h3>Capture the full picture</h3>
+                    <p>Record clear descriptions, categories, priorities and severity so each report starts with useful context.</p>
+                </article>
+                <article class="landing-feature">
+                    <span class="landing-feature-icon"><i class="bi bi-people"></i></span>
+                    <h3>Make ownership visible</h3>
+                    <p>Give every ticket a clear owner. Admin and developer views keep the right work in front of the right people.</p>
+                </article>
+                <article class="landing-feature">
+                    <span class="landing-feature-icon"><i class="bi bi-activity"></i></span>
+                    <h3>Keep progress moving</h3>
+                    <p>Follow status changes, comments and activity history from report through resolution in one place.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="landing-workflow" id="workflow">
+        <div class="landing-container">
+            <div class="landing-section-heading">
+                <span>A SIMPLE, CLEAR WORKFLOW</span>
+                <h2>Less chasing. More fixing.</h2>
+                <p>A shared process helps everyone know what needs attention and what happens next.</p>
+            </div>
+            <div class="landing-workflow-grid">
+                <article class="landing-step">
+                    <span class="landing-step-number">01</span>
+                    <h3>Report with context</h3>
+                    <p>Describe the issue, where it happens and how urgent it is.</p>
+                </article>
+                <article class="landing-step">
+                    <span class="landing-step-number">02</span>
+                    <h3>Assign the next step</h3>
+                    <p>Route the ticket to a developer and keep discussion attached to the work.</p>
+                </article>
+                <article class="landing-step">
+                    <span class="landing-step-number">03</span>
+                    <h3>Track it to resolution</h3>
+                    <p>Move through clear statuses and keep a useful record of progress.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="landing-cta">
+        <div class="landing-container">
+            <h2>Give every issue a clear path forward.</h2>
+            <p>Sign in to your BugTrack workspace and keep your team moving.</p>
+            <a th:href="@{/login}" class="btn">Open workspace <i class="bi bi-arrow-right"></i></a>
+        </div>
+    </section>
+</main>
+
+<footer class="landing-footer">
+    <div class="landing-container landing-footer-inner">
+        <span>© BugTrack · Software Bug &amp; Ticket Tracking System</span>
+        <a th:href="@{/login}">Sign in</a>
+    </div>
+</footer>
+</body>
+</html>

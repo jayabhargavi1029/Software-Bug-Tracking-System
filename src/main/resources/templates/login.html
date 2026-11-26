@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Sign in')}"></head>
+<body class="login-body">
+<div class="login-wrap">
+    <section class="login-hero">
+        <a th:href="@{/login}" class="brand brand-light">
+            <span class="brand-mark"><i class="bi bi-bug-fill"></i></span><span>Bug<b>Track</b></span>
+        </a>
+        <div>
+            <h1>Track every bug.<br>Ship with confidence.</h1>
+            <p>Report issues, assign them to developers and follow each ticket from Open to Closed in one clean workspace.</p>
+            <ul class="hero-points">
+                <li><i class="bi bi-check2-circle"></i> Priority and severity tracking</li>
+                <li><i class="bi bi-check2-circle"></i> Status history and comments</li>
+                <li><i class="bi bi-check2-circle"></i> Separate admin and developer dashboards</li>
+            </ul>
+        </div>
+        <small>B.Tech CSE Java Project</small>
+    </section>
+
+    <section class="login-panel">
+        <form th:action="@{/login}" method="post" class="login-card" autocomplete="on">
+            <div class="login-icon"><i class="bi bi-shield-lock"></i></div>
+            <h2>Welcome back</h2>
+            <p class="text-muted">Sign in to your workspace.</p>
+
+            <div class="alert alert-danger py-2" th:if="${param.error}"><i class="bi bi-x-circle"></i> Invalid username or password.</div>
+            <div class="alert alert-success py-2" th:if="${param.logout}"><i class="bi bi-check-circle"></i> You have been signed out.</div>
+
+            <div class="mb-3">
+                <label class="form-label" for="username">Username</label>
+                <input class="form-control" id="username" name="username" type="text" required autofocus autocomplete="username">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="password">Password</label>
+                <input class="form-control" id="password" name="password" type="password" required autocomplete="current-password">
+            </div>
+            <button class="btn btn-primary w-100" type="submit">Sign in</button>
+
+        </form>
+    </section>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

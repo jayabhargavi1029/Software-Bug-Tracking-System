@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Tickets')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/layout :: sidebar('tickets')}"></aside>
+    <div class="content-area">
+        <header th:replace="~{fragments/layout :: topbar('Tickets')}"></header>
+        <main class="page">
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <div class="page-head">
+                <div>
+                    <h1><span sec:authorize="hasRole('ADMIN')">All Tickets</span><span sec:authorize="hasRole('DEVELOPER')">My Tickets</span></h1>
+                    <p class="text-muted"><span th:text="${#lists.size(tickets)}">0</span> ticket(s) found</p>
+                </div>
+                <a th:href="@{/tickets/new}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Report Bug</a>
+            </div>
+
+            <form th:action="@{/tickets}" method="get" class="card-box filter-bar">
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text" name="q" th:value="${q}" class="form-control" placeholder="Search by ticket ID or title">
+                </div>
+                <select name="status" class="form-select">
+                    <option value="">All statuses</option>
+                    <option th:each="s : ${statuses}" th:value="${s.name()}" th:text="${s.label}" th:selected="${s == status}"></option>
+                </select>
+                <select name="priority" class="form-select">
+                    <option value="">All priorities</option>
+                    <option th:each="p : ${priorities}" th:value="${p.name()}" th:text="${p.label}" th:selected="${p == priority}"></option>
+                </select>
+                <select name="category" class="form-select">
+                    <option value="">All categories</option>
+                    <option th:each="c : ${categories}" th:value="${c.name()}" th:text="${c.label}" th:selected="${c == category}"></option>
+                </select>
+                <select name="developerId" class="form-select" sec:authorize="hasRole('ADMIN')">
+                    <option value="">All developers</option>
+                    <option th:each="d : ${developers}" th:value="${d.id}" th:text="${d.fullName}" th:selected="${d.id == developerId}"></option>
+                </select>
+                <button type="submit" class="btn btn-primary"><i class="bi bi-funnel"></i> Filter</button>
+                <a th:href="@{/tickets}" class="btn btn-light">Reset</a>
+            </form>
+
+            <section class="card-box p-0">
+                <div class="table-responsive">
+                    <table class="table data-table align-middle mb-0">
+                        <thead>
+                        <tr>
+                            <th>Ticket</th><th>Title</th><th class="d-none d-lg-table-cell">Category</th><th>Priority</th><th>Status</th>
+                            <th class="d-none d-md-table-cell">Assigned to</th><th class="d-none d-xl-table-cell">Reported</th><th class="text-end">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="t : ${tickets}">
+                            <td><a th:href="@{/tickets/{id}(id=${t.id})}" class="ticket-id" th:text="${t.ticketId}">BUG-1001</a></td>
+                            <td class="title-cell"><a th:href="@{/tickets/{id}(id=${t.id})}" th:text="${t.title}">Title</a></td>
+                            <td class="d-none d-lg-table-cell" th:text="${t.category.label}">UI</td>
+                            <td><span th:replace="~{fragments/layout :: priorityBadge(${t.priority})}"></span></td>
+                            <td><span th:replace="~{fragments/layout :: statusBadge(${t.status})}"></span></td>
+                            <td class="d-none d-md-table-cell" th:text="${t.assignedTo != null} ? ${t.assignedTo.fullName} : 'Unassigned'">Dev</td>
+                            <td class="d-none d-xl-table-cell text-muted" th:text="${#temporals.format(t.createdAt, 'dd MMM yyyy')}">01 Jan 2026</td>
+                            <td class="text-end text-nowrap">
+                                <a th:href="@{/tickets/{id}(id=${t.id})}" class="btn btn-sm btn-light" title="View"><i class="bi bi-eye"></i></a>
+                                <a sec:authorize="hasRole('ADMIN')" th:href="@{/tickets/{id}/edit(id=${t.id})}" class="btn btn-sm btn-light" title="Edit"><i class="bi bi-pencil"></i></a>
+                                <button sec:authorize="hasRole('ADMIN')" type="button" class="btn btn-sm btn-light text-danger" title="Delete"
+                                        data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                        th:data-action="@{/tickets/{id}/delete(id=${t.id})}"
+                                        th:data-message="'Delete ticket ' + ${t.ticketId} + '? Its comments and history will be deleted too. This cannot be undone.'">
+                                    <i class="bi bi-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(tickets)}"><td colspan="8" class="empty-state">
+                            <i class="bi bi-inbox"></i><div>No tickets match your search.</div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+<div th:replace="~{fragments/layout :: confirmModal}"></div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

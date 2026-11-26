@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin Dashboard')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/layout :: sidebar('dashboard')}"></aside>
+    <div class="content-area">
+        <header th:replace="~{fragments/layout :: topbar('Admin Dashboard')}"></header>
+        <main class="page">
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <div class="page-head">
+                <div><h1>Overview</h1><p class="text-muted">Live statistics from the ticket database.</p></div>
+                <a th:href="@{/tickets/new}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Report Bug</a>
+            </div>
+
+            <div class="stat-grid">
+                <div class="stat-card"><div class="stat-icon blue"><i class="bi bi-bug"></i></div>
+                    <div><div class="stat-value" th:text="${stats.total}">0</div><div class="stat-label">Total reported</div></div></div>
+                <div class="stat-card"><div class="stat-icon sky"><i class="bi bi-folder2-open"></i></div>
+                    <div><div class="stat-value" th:text="${stats.open}">0</div><div class="stat-label">Open bugs</div></div></div>
+                <div class="stat-card"><div class="stat-icon amber"><i class="bi bi-arrow-repeat"></i></div>
+                    <div><div class="stat-value" th:text="${stats.inProgress}">0</div><div class="stat-label">In progress</div></div></div>
+                <div class="stat-card"><div class="stat-icon green"><i class="bi bi-check2-circle"></i></div>
+                    <div><div class="stat-value" th:text="${stats.resolved}">0</div><div class="stat-label">Resolved</div></div></div>
+                <div class="stat-card"><div class="stat-icon red"><i class="bi bi-exclamation-octagon"></i></div>
+                    <div><div class="stat-value" th:text="${stats.critical}">0</div><div class="stat-label">Critical priority</div></div></div>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-lg-6">
+                    <section class="card-box h-100">
+                        <h3 class="card-title">Bugs by status</h3>
+                        <div class="bar-row" th:each="d : ${stats.byStatus}">
+                            <div class="bar-label" th:text="${d.label}">Open</div>
+                            <div class="bar-track"><div class="bar-fill" th:classappend="'bar-status-' + ${d.cssClass}" th:style="'width:' + ${d.percent} + '%'"></div></div>
+                            <div class="bar-count" th:text="${d.count}">0</div>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-lg-6">
+                    <section class="card-box h-100">
+                        <h3 class="card-title">Bugs by priority</h3>
+                        <div class="bar-row" th:each="d : ${stats.byPriority}">
+                            <div class="bar-label" th:text="${d.label}">High</div>
+                            <div class="bar-track"><div class="bar-fill" th:classappend="'bar-prio-' + ${d.cssClass}" th:style="'width:' + ${d.percent} + '%'"></div></div>
+                            <div class="bar-count" th:text="${d.count}">0</div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <section class="card-box p-0">
+                <div class="card-head">
+                    <h3 class="card-title m-0">Recently reported tickets</h3>
+                    <a th:href="@{/tickets}" class="btn btn-sm btn-outline-primary">View all</a>
+                </div>
+                <div th:replace="~{fragments/layout :: ticketTable(${stats.recent})}"></div>
+            </section>
+        </main>
+    </div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('User Profile')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/layout :: sidebar('users')}"></aside>
+    <div class="content-area">
+        <header th:replace="~{fragments/layout :: topbar('User Profile')}"></header>
+        <main class="page">
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <div class="page-head">
+                <div>
+                    <a th:href="@{/admin/users}" class="back-link"><i class="bi bi-arrow-left"></i> Back to users</a>
+                    <div class="profile-heading">
+                        <span class="avatar profile-avatar" th:text="${account.initial}">A</span>
+                        <div>
+                            <h1 th:text="${account.fullName}">User name</h1>
+                            <div class="d-flex flex-wrap gap-2 mt-2">
+                                <span class="role-tag" th:text="${account.role.label}">Role</span>
+                                <span th:if="${account.anonymized}" class="pill status-closed">Anonymized</span>
+                                <span th:if="${account.accessRevoked and !account.anonymized}" class="pill status-closed">Access removed</span>
+                                <span th:if="${!account.anonymized and !account.accessRevoked}" class="pill"
+                                      th:classappend="${account.active} ? 'status-resolved' : 'status-closed'"
+                                      th:text="${account.active} ? 'Active' : 'Inactive'">Active</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-lg-8">
+                    <section class="card-box">
+                        <h3 class="card-title">Personal details</h3>
+                        <dl class="detail-list profile-details">
+                            <dt>Full name</dt><dd th:text="${account.fullName}">Name</dd>
+                            <dt>Username</dt><dd th:text="${account.username}">username</dd>
+                            <dt>E-mail</dt><dd th:text="${account.email}">email</dd>
+                            <dt>Role</dt><dd th:text="${account.role.label}">Role</dd>
+                            <dt>Account status</dt>
+                            <dd th:text="${account.anonymized} ? 'Anonymized' : (${account.accessRevoked} ? 'Access removed' : (${account.active} ? 'Active' : 'Inactive'))">Active</dd>
+                            <dt>Member since</dt>
+                            <dd th:text="${#temporals.format(account.createdAt, 'dd MMM yyyy')}">date</dd>
+                            <dt>Last updated</dt>
+                            <dd th:text="${#temporals.format(account.updatedAt, 'dd MMM yyyy, HH:mm')}">date</dd>
+                        </dl>
+                    </section>
+                </div>
+
+                <div class="col-lg-4">
+                    <section class="account-action-card">
+                        <div class="account-action-icon"><i class="bi bi-shield-lock"></i></div>
+                        <h3>Privacy &amp; access</h3>
+                        <p>Removing login access permanently blocks sign-in. The user's name, username, e-mail, and recorded work remain available to administrators for accountability.</p>
+                        <button th:if="${!account.anonymized and !account.accessRevoked and account.id != currentUser.id}"
+                                type="button" class="btn btn-outline-danger"
+                                data-bs-toggle="modal" data-bs-target="#removeUserAccessModal">
+                            <i class="bi bi-person-lock"></i> Remove login access
+                        </button>
+                        <p th:if="${account.accessRevoked}" class="account-action-note mb-0">Login access has been removed. The user's identity and work history remain available to administrators.</p>
+                        <p th:if="${account.anonymized}" class="account-action-note mb-0">This legacy account was previously anonymized.</p>
+                        <p th:if="${account.id == currentUser.id}" class="account-action-note mb-0">You cannot remove access to your own account.</p>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div class="modal fade" id="removeUserAccessModal" tabindex="-1" aria-labelledby="removeUserAccessTitle" aria-hidden="true"
+     th:if="${!account.anonymized and !account.accessRevoked and account.id != currentUser.id}">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form th:action="@{/admin/users/{id}/remove-access(id=${account.id})}" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="removeUserAccessTitle">Remove login access?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-2">This will permanently prevent <strong th:text="${account.fullName}">this user</strong> from signing in.</p>
+                    <p class="text-muted mb-0">Their name, username, e-mail, tickets, comments, and activity history will remain visible to administrators for accountability.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-person-lock"></i> Remove login access</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

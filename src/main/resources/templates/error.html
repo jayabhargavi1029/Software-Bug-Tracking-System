@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Error')}"></head>
+<body class="login-body">
+<div class="message-page">
+    <div class="message-card">
+        <div class="login-icon danger"><i class="bi bi-exclamation-triangle"></i></div>
+        <h2><span th:text="${status}">500</span> - Something went wrong</h2>
+        <p class="text-muted" th:text="${#strings.isEmpty(message)} ? 'The page could not be shown.' : ${message}">Message</p>
+        <a th:href="@{/dashboard}" class="btn btn-primary">Back to dashboard</a>
+    </div>
+</div>
+</body>
+</html>

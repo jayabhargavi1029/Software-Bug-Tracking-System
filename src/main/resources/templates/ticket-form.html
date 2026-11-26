@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Report Bug')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/layout :: sidebar(${editing} ? 'tickets' : 'report')}"></aside>
+    <div class="content-area">
+        <header th:replace="~{fragments/layout :: topbar(${editing} ? 'Edit Ticket' : 'Report a Bug')}"></header>
+        <main class="page">
+            <div class="page-head">
+                <div>
+                    <h1 th:text="${editing} ? 'Edit ' + ${ticket.ticketId} : 'Report a Bug'">Report a Bug</h1>
+                    <p class="text-muted">Fill in the details so developers can reproduce and fix the problem.</p>
+                </div>
+            </div>
+
+            <form th:action="${editing} ? @{/tickets/{id}/edit(id=${ticket.id})} : @{/tickets}"
+                  th:object="${ticketForm}" method="post" class="card-box form-card" novalidate>
+
+                <div class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}">
+                    <div th:each="e : ${#fields.globalErrors()}" th:text="${e}">Error</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="title">Bug title *</label>
+                    <input type="text" id="title" th:field="*{title}" class="form-control" th:errorclass="is-invalid" maxlength="150"
+                           placeholder="Short summary, e.g. Login button does nothing">
+                    <div class="invalid-feedback" th:errors="*{title}">Error</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="description">Detailed description *</label>
+                    <textarea id="description" th:field="*{description}" class="form-control" th:errorclass="is-invalid" rows="6" maxlength="4000"
+                              placeholder="Steps to reproduce, expected result, actual result..."></textarea>
+                    <div class="invalid-feedback" th:errors="*{description}">Error</div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label" for="category">Category / module *</label>
+                        <select id="category" th:field="*{category}" class="form-select" th:errorclass="is-invalid">
+                            <option value="">Select category</option>
+                            <option th:each="c : ${categories}" th:value="${c.name()}" th:text="${c.label}"></option>
+                        </select>
+                        <div class="invalid-feedback" th:errors="*{category}">Error</div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="priority">Priority *</label>
+                        <select id="priority" th:field="*{priority}" class="form-select" th:errorclass="is-invalid">
+                            <option value="">Select priority</option>
+                            <option th:each="p : ${priorities}" th:value="${p.name()}" th:text="${p.label}"></option>
+                        </select>
+                        <div class="invalid-feedback" th:errors="*{priority}">Error</div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="severity">Severity *</label>
+                        <select id="severity" th:field="*{severity}" class="form-select" th:errorclass="is-invalid">
+                            <option value="">Select severity</option>
+                            <option th:each="s : ${severities}" th:value="${s.name()}" th:text="${s.label}"></option>
+                        </select>
+                        <div class="invalid-feedback" th:errors="*{severity}">Error</div>
+                    </div>
+                </div>
+
+                <div class="mb-4" sec:authorize="hasRole('ADMIN')">
+                    <label class="form-label" for="assignedToId">Assign to developer</label>
+                    <select id="assignedToId" th:field="*{assignedToId}" class="form-select">
+                        <option value="">Unassigned</option>
+                        <option th:each="d : ${developers}" th:value="${d.id}" th:text="${d.fullName}"></option>
+                    </select>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i>
+                        <span th:text="${editing} ? 'Save changes' : 'Submit bug'">Submit bug</span></button>
+                    <a th:href="${editing} ? @{/tickets/{id}(id=${ticket.id})} : @{/tickets}" class="btn btn-light">Cancel</a>
+                </div>
+            </form>
+        </main>
+    </div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

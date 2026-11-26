@@ -1,0 +1,20 @@
+/target/
+/logs/
+*.log
+*.class
+
+# Local environment/secrets. Keep the safe template versioned.
+.env
+.env.*
+!.env.example
+
+# IDE and OS-generated files
+.idea/
+.vscode/
+*.iml
+.classpath
+.project
+.settings/
+.factorypath
+.DS_Store
+Thumbs.db

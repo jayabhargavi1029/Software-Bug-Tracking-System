@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Ticket Details')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/layout :: sidebar('tickets')}"></aside>
+    <div class="content-area">
+        <header th:replace="~{fragments/layout :: topbar('Ticket Details')}"></header>
+        <main class="page">
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <div class="page-head">
+                <div>
+                    <a th:href="@{/tickets}" class="back-link"><i class="bi bi-arrow-left"></i> Back to tickets</a>
+                    <h1 class="mt-1"><span class="ticket-id" th:text="${ticket.ticketId}">BUG-1001</span> &nbsp;<span th:text="${ticket.title}">Title</span></h1>
+                    <div class="d-flex flex-wrap gap-2 mt-2">
+                        <span th:replace="~{fragments/layout :: statusBadge(${ticket.status})}"></span>
+                        <span th:replace="~{fragments/layout :: priorityBadge(${ticket.priority})}"></span>
+                    </div>
+                </div>
+                <div class="d-flex gap-2" th:if="${canManage}">
+                    <a th:href="@{/tickets/{id}/edit(id=${ticket.id})}" class="btn btn-outline-primary"><i class="bi bi-pencil"></i> Edit</a>
+                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmModal"
+                            th:data-action="@{/tickets/{id}/delete(id=${ticket.id})}"
+                            th:data-message="'Delete ticket ' + ${ticket.ticketId} + '? Its comments and history will be deleted too. This cannot be undone.'">
+                        <i class="bi bi-trash"></i> Delete</button>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <!-- LEFT: description + comments -->
+                <div class="col-lg-8">
+                    <section class="card-box mb-3">
+                        <h3 class="card-title">Description</h3>
+                        <p class="description-text" th:text="${ticket.description}">Description</p>
+                    </section>
+
+                    <section class="card-box">
+                        <h3 class="card-title">Comments <span class="count-chip" th:text="${#lists.size(comments)}">0</span></h3>
+                        <div th:each="c : ${comments}" class="comment">
+                            <span class="avatar" th:text="${c.author.initial}">A</span>
+                            <div class="comment-body">
+                                <div class="comment-head">
+                                    <strong th:text="${c.author.fullName}">Name</strong>
+                                    <span class="role-tag" th:text="${c.author.role.label}">Role</span>
+                                    <small class="text-muted" th:text="${#temporals.format(c.createdAt, 'dd MMM yyyy, HH:mm')}">date</small>
+                                </div>
+                                <p th:text="${c.message}">Message</p>
+                            </div>
+                        </div>
+                        <p class="text-muted" th:if="${#lists.isEmpty(comments)}">No comments yet. Start the discussion below.</p>
+
+                        <form th:action="@{/tickets/{id}/comments(id=${ticket.id})}" method="post" class="mt-3">
+                            <label class="form-label" for="message">Add a comment</label>
+                            <textarea id="message" name="message" class="form-control mb-2" rows="3" maxlength="2000" required
+                                      placeholder="Write an update or question..."></textarea>
+                            <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-send"></i> Post comment</button>
+                        </form>
+                    </section>
+                </div>
+
+                <!-- RIGHT: details, status, assignment, history -->
+                <div class="col-lg-4">
+                    <section class="card-box mb-3">
+                        <h3 class="card-title">Details</h3>
+                        <dl class="detail-list">
+                            <dt>Category</dt><dd th:text="${ticket.category.label}">UI</dd>
+                            <dt>Severity</dt><dd th:text="${ticket.severity.label}">Major</dd>
+                            <dt>Reported by</dt><dd th:text="${ticket.reportedBy.fullName}">Name</dd>
+                            <dt>Assigned to</dt><dd th:text="${ticket.assignedTo != null} ? ${ticket.assignedTo.fullName} : 'Unassigned'">Dev</dd>
+                            <dt>Date reported</dt><dd th:text="${#temporals.format(ticket.createdAt, 'dd MMM yyyy, HH:mm')}">date</dd>
+                            <dt>Last updated</dt><dd th:text="${#temporals.format(ticket.updatedAt, 'dd MMM yyyy, HH:mm')}">date</dd>
+                        </dl>
+                    </section>
+
+                    <section class="card-box mb-3" th:if="${canUpdateStatus}">
+                        <h3 class="card-title">Update status</h3>
+                        <form th:action="@{/tickets/{id}/status(id=${ticket.id})}" method="post" class="d-flex gap-2">
+                            <select name="status" class="form-select" aria-label="New status">
+                                <option th:each="s : ${nextStatuses}" th:value="${s.name()}" th:text="${s.label}"></option>
+                            </select>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </form>
+                    </section>
+
+                    <section class="card-box mb-3" th:if="${canManage}">
+                        <h3 class="card-title">Assign developer</h3>
+                        <form th:action="@{/tickets/{id}/assign(id=${ticket.id})}" method="post" class="d-flex gap-2">
+                            <select name="developerId" class="form-select" aria-label="Developer">
+                                <option value="">Unassigned</option>
+                                <option th:each="d : ${developers}" th:value="${d.id}" th:text="${d.fullName}"
+                                        th:selected="${ticket.assignedTo != null and ticket.assignedTo.id == d.id}"></option>
+                            </select>
+                            <button type="submit" class="btn btn-primary">Assign</button>
+                        </form>
+                    </section>
+
+                    <section class="card-box">
+                        <h3 class="card-title">Activity history</h3>
+                        <ul class="timeline">
+                            <li th:each="h : ${history}">
+                                <span class="dot"></span>
+                                <div>
+                                    <strong th:text="${h.action}">Action</strong>
+                                    <div class="text-muted small" th:text="${h.details}">Details</div>
+                                    <div class="small text-muted"><span th:text="${h.changedBy.fullName}">Name</span> &middot;
+                                        <span th:text="${#temporals.format(h.createdAt, 'dd MMM yyyy, HH:mm')}">date</span></div>
+                                </div>
+                            </li>
+                        </ul>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<div th:replace="~{fragments/layout :: confirmModal}"></div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>
