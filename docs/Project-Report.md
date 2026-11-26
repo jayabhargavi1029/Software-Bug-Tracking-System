@@ -6,7 +6,7 @@
 ---
 
 ## 1. Abstract
-Software teams find bugs continuously, but without a proper system the reports are scattered across chats and e-mails. This project presents the *Software Bug & Ticket Tracking System*, a web application developed in Java with Spring Boot, Thymeleaf, Bootstrap, and JPA. Users report bugs as tickets with priority, severity and module; administrators assign tickets to developers; developers update progress and discuss the issue in comments. Every change is stored in a history trail and dashboards show live statistics from the database. Role-based security with BCrypt-hashed passwords protects the system. Local demonstration and automated tests use H2; MySQL remains available for persistent use.
+Software teams find bugs continuously, but without a proper system the reports are scattered across chats and e-mails. This project presents the *Software Bug & Ticket Tracking System*, a web application developed in Java with Spring Boot, Thymeleaf, Bootstrap, and JPA. Users report bugs as tickets with priority, severity and module; administrators assign tickets to developers; developers update progress and discuss the issue in comments. Every change is stored in a history trail and dashboards show live statistics from the database. Role-based security with BCrypt-hashed passwords protects the system. Local demonstrations and automated tests use H2; MySQL remains available for persistent use. A public demonstration is deployed on Render using a Java 21 Docker image and the H2 demo profile.
 
 ## 2. Introduction
 Bug tracking is a core part of the software development life cycle. A ticket is a record that describes one defect from the moment it is reported until it is closed. Tools such as Jira and Bugzilla are widely used in industry. This project builds a simplified but fully working version of such a tool to apply Java OOP concepts, MVC architecture and database programming in a real application.
@@ -39,6 +39,7 @@ A web application with unique ticket ids, enforced status workflow, role-based a
 | --- | --- |
 | Software | JDK 21, Maven 3.9+, H2 for demo/tests, optional MySQL 8 for persistent use, modern browser |
 | Hardware | 4 GB RAM, any Windows 10/11 PC |
+| Hosting | Render free web-service plan for the public demo; no hosted database |
 
 ## 8. Architecture
 The application follows the **MVC** pattern with a layered design.
@@ -168,19 +169,28 @@ Tests use JUnit 5, Spring Boot Test, MockMvc and an in-memory H2 database (`mvn 
 | `TicketServiceTest` | Creating a bug, ticket-id generation, search/filter, status update and invalid moves, comments, deleting tickets with their comments/history, dashboard statistics, duplicate users, password hashing, and retained identity after access removal |
 | `SecurityAccessTest` | Anonymous redirect, admin/developer page access, forbidden actions, user-access removal permissions, CSRF |
 
-Latest verification in the current workspace: `mvn package` completed with **32 tests run, 0 failures, 0 errors, and 0 skipped**. This command compiled, ran the tests, and packaged the executable JAR. Tests use H2 and do not require MySQL.
+Latest local verification: `mvn test` completed with **32 tests run, 0 failures, 0 errors, and 0 skipped**. The tests use H2 and do not require MySQL. The Render Docker build also completed successfully.
 
 ## 13. Results
 The application has been verified locally using the H2 demo profile. The landing page, authenticated administrator dashboard, ticket list, and authenticated developer dashboard were loaded in a browser. The demo loader supplies one administrator, three developers, and twelve sample tickets with varied priorities, severities, statuses, and comments.
 
-Automated tests cover status transitions, ticket/service behavior, and role-based access. The latest Maven package run passed all 32 tests. These results confirm the covered code paths; they should not be read as a claim that every possible browser workflow or deployment environment has been exhaustively tested.
+Automated tests cover status transitions, ticket/service behavior, and role-based access. The latest Maven test run passed all 32 tests. The public Render deployment was reported live on 26 November 2026; its homepage and login page both returned HTTP 200 over HTTPS. These results confirm the covered code paths and basic public availability; they should not be read as a claim that every possible browser workflow or deployment environment has been exhaustively tested.
 
-## 14. Conclusion
-The system replaces scattered bug reporting with a structured, secure, database-backed web application. It demonstrates MVC, layered architecture, JPA relationships, validation, role-based security and OOP principles in one project.
+## 14. Public Deployment
 
-## 15. Future Scope
+The public demonstration is available at [https://bugtrack-java.onrender.com](https://bugtrack-java.onrender.com). The Render service uses the free web-service plan and deploys the `render-deploy` branch. A deployment-only [`Dockerfile`](../Dockerfile) uses Maven and Java 21 to package the application and run it in a Java 21 runtime. The container activates Spring's `demo` profile and binds the server to Render's assigned `PORT`.
+
+The initial Render attempt was configured as a Node service with `12345` as its start command. Render's log reported `bash: line 1: 12345: command not found` and exit status 127. The live deployment uses the Java Docker configuration instead.
+
+The hosted demonstration uses in-memory H2 and synthetic demo accounts; it has no persistent hosted database. Data may be lost when the service restarts or is redeployed. The sample credentials are public, so the hosted demo must not be used for confidential or production data.
+
+## 15. Conclusion
+The system replaces scattered bug reporting with a structured web application. It demonstrates MVC, layered architecture, JPA relationships, validation, role-based security and OOP principles in one project, with a publicly accessible Render demonstration.
+
+## 16. Future Scope
 - File/screenshot attachments on tickets.
 - E-mail notifications on assignment and status change.
 - Reporter role and project-wise grouping.
 - Charts with a JavaScript chart library, CSV/PDF export.
-- REST API and mobile client; deployment with Docker.
+- REST API and mobile client.
+- Persistent production storage and production-ready secrets/account configuration.

@@ -64,6 +64,7 @@ Use the actual installation path on your computer in place of the example.
 
 ```text
 Software-Bug-Tracking-System/
+|-- Dockerfile                            # Multi-stage Java 21 image for Render deployment
 |-- .env.example                         # MySQL environment-variable names/example only
 |-- .gitignore
 |-- pom.xml
@@ -138,9 +139,9 @@ mvn spring-boot:run "-Dspring-boot.run.profiles=demo"
 
 Open [http://localhost:8080](http://localhost:8080). Stop the application with `Ctrl+C` in the terminal running Maven.
 
-### Local demonstration accounts
+### Demonstration accounts
 
-These are synthetic local-demo accounts seeded by `DemoDataLoader` and verified against the demo application. They are public sample credentials, not private or production credentials. Do not reuse them outside a local demonstration.
+These synthetic accounts are seeded by `DemoDataLoader` when the `demo` profile starts with an empty user table. The same profile powers the public Render demo, so these are public sample credentials, not private or production credentials. Anyone can sign in with them; do not enter real, sensitive, or confidential data.
 
 | Role | Username | Password |
 | --- | --- | --- |
@@ -157,6 +158,18 @@ Passwords are encoded through the application's Spring Security password encoder
 4. Open **Users** and inspect a user's profile and access controls.
 5. Sign out and sign in as the developer to review assigned/reported tickets and the developer dashboard.
 6. Create a test ticket or add a comment/status update if you want to demonstrate changes. The in-memory data resets when the app stops.
+
+## Public Render deployment
+
+The application is deployed at [https://bugtrack-java.onrender.com](https://bugtrack-java.onrender.com). On 26 November 2026, Render reported the service as live, and the public homepage and `/login` both returned HTTP 200.
+
+- **Hosting:** Render free web-service plan; no paid database is attached.
+- **Deployment branch:** `render-deploy`. Render automatically deploys commits pushed to this branch.
+- **Container:** [`Dockerfile`](Dockerfile) builds the application with Maven and Java 21, then runs it on a Java 21 runtime.
+- **Runtime configuration:** The container activates the `demo` Spring profile and binds Spring Boot to Render's `PORT` environment variable.
+- **Data:** The demo uses in-memory H2. Tickets and accounts are temporary and can reset when the service restarts or is redeployed.
+
+The public demo uses the sample accounts above. Do not use the hosted demo for private or production data. To deploy application changes, merge or apply them to `render-deploy` while preserving the Dockerfile; pushes to that branch trigger Render deployments.
 
 ## Optional MySQL setup
 
@@ -191,7 +204,7 @@ mvn clean test
 
 Tests use the H2 test profile and do not require MySQL. The suite covers status transitions, ticket/service behavior, and role-based access using JUnit 5, Spring Boot Test, and MockMvc.
 
-Latest verified build in this workspace: `mvn package` completed successfully, including **32 tests run, 0 failures, 0 errors, and 0 skipped**.
+Latest verification: `mvn test` completed successfully with **32 tests run, 0 failures, 0 errors, and 0 skipped**. The Render Docker build also completed and the hosted service was verified live.
 
 Build the executable JAR:
 
@@ -231,22 +244,11 @@ No screenshots are included in this source submission. Add real screenshots here
 | Demo data disappears after stop | Expected: H2 is in-memory and uses `create-drop`. Use MySQL for persistent local data. |
 | Sign-in fails in demo mode | Start with the `demo` profile and use one of the synthetic account pairs above. Seed data is not loaded if the user table already contains records. |
 
-## GitHub preparation
+## GitHub and deployment branches
 
-The project is source-ready and `.gitignore` excludes generated build output, IDE files, logs, and local secret files. The archive is not intended to be committed inside the project.
+The source is hosted on GitHub. The `render-deploy` branch contains the deployment-only Dockerfile and is connected to the public Render service; `main` remains the application development branch. To publish application changes, merge or apply them to `render-deploy` and push that branch. Render is configured to deploy new commits automatically.
 
-To publish it yourself, first create an empty repository on GitHub, then run these commands from the project directory after replacing the remote URL with your own:
-
-```powershell
-git init
-git add .
-git commit -m "Initial BugTrack project"
-git branch -M main
-git remote add origin https://github.com/<your-account>/<your-repository>.git
-git push -u origin main
-```
-
-Review `git status` and staged files before pushing. Do not add real credentials or generated `target/` files. No repository has been uploaded or published by this project preparation.
+Review staged files before pushing. Do not commit real credentials or generated `target/` files; `.gitignore` excludes build output, IDE files, logs, and local secret files.
 
 ## Author and institution
 
@@ -256,7 +258,8 @@ The existing project report records the following attribution: **Jaya**, Compute
 
 - Add ticket attachments and email notifications.
 - Add project-level grouping, reporting charts, and export.
-- Add a REST API and optional container deployment.
+- Add a persistent production database and production-ready account/secret management.
+- Add a REST API and optional container orchestration.
 - Expand automated browser-level coverage and accessibility checks.
 
 For the academic project report and technical discussion, see [`docs/Project-Report.md`](docs/Project-Report.md).
